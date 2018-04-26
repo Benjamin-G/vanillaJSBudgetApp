@@ -25,22 +25,20 @@ const budgetController = ( _ => {
   }
 
   return {
-    addItem: ({type, des, val}) => {
+    addItem: ({type, desc, value}) => {
       //Create new Id
       const notFirst = data.allItems[type].length !== 0
       const id = notFirst ? data.allItems[type].slice(-1)[0].id + 1 : 0
 
       //Create new Item
-      const newItem = type === 'exp' ? createExpense(id, des, val) : createIncome(id, des, val)
+      const newItem = type === 'exp' ? createExpense(id, desc, value) : createIncome(id, desc, value)
 
       //Store previous state
       const prevState = data.allItems[type]
 
       //Return previous state and new item to data structure 
       data.allItems[type] = [...prevState, newItem ]
-      
-      console.log(data) //Checking data structure
-
+    
       return newItem
     }
   }
@@ -54,7 +52,9 @@ const UIController = ( _ => {
     inputType: '.add__type',
     inputDescription: '.add__description',
     inputValue: '.add__value',
-    inputBtn: '.add__btn'
+    inputBtn: '.add__btn',
+    incomeContainer: '.income__list',
+    expenseContainer: '.expenses__list',
   }
 
   return {
@@ -65,7 +65,33 @@ const UIController = ( _ => {
   
       return { type, desc, value }
     },
-    DOMstrings: {...DOMstrings}
+
+    addListItem: (obj, type) => {
+      const isIncome = type === 'inc'
+
+      //set HTML depending on income or expense
+      const idHTML = isIncome ? `income-${obj.id}` : `expense-${obj.id}`
+      const valueHTML = isIncome ? `+ ${obj.value}` : `- ${obj.value}`
+      const descHTML = obj.description
+
+      //set element to insert html
+      const element = isIncome ? DOMstrings.incomeContainer : DOMstrings.expenseContainer
+
+      const html = `<div class="item clearfix" id="${idHTML}">
+                      <div class="item__description">${descHTML}</div>
+                        <div class="right clearfix">
+                          <div class="item__value">${valueHTML}</div>
+                          ${isIncome ? `<div class="item__percentage">21%</div>` : ''}
+                          <div class="item__delete">
+                          <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                        </div>
+                      </div>
+                    </div>`
+      //Insert into DOM                    
+      document.querySelector(element).insertAdjacentHTML('beforeend', html)
+    },
+
+    DOMstrings: {...DOMstrings},
   }
 })()
 
@@ -88,9 +114,10 @@ const controller = ((budgetCtrl, UICtrl) => {
     const input = UICtrl.getinput()
 
     // add item to budget
-    const newItem = budgetController.addItem({...input})
-
+    const newItem = budgetCtrl.addItem({...input})
+    
     // add item to ui
+    UICtrl.addListItem(newItem, input.type)
 
     // calc budget
 
