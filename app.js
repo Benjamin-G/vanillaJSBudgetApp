@@ -81,7 +81,7 @@ const UIController = ( _ => {
                       <div class="item__description">${descHTML}</div>
                         <div class="right clearfix">
                           <div class="item__value">${valueHTML}</div>
-                          ${isIncome ? `<div class="item__percentage">21%</div>` : ''}
+                          ${!isIncome ? `<div class="item__percentage">21%</div>` : ''}
                           <div class="item__delete">
                           <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
                         </div>
@@ -89,6 +89,15 @@ const UIController = ( _ => {
                     </div>`
       //Insert into DOM                    
       document.querySelector(element).insertAdjacentHTML('beforeend', html)
+    },
+
+    clearFields: _ => {
+      const fields = document.querySelectorAll(`${DOMstrings.inputDescription}, ${DOMstrings.inputValue}`)
+      const fieldsArr = Array.prototype.slice.call(fields)
+
+      fieldsArr.forEach(element => element.value = '' )
+
+      fieldsArr[0].focus()
     },
 
     DOMstrings: {...DOMstrings},
@@ -119,6 +128,8 @@ const controller = ((budgetCtrl, UICtrl) => {
     // add item to ui
     UICtrl.addListItem(newItem, input.type)
 
+    // clear fields
+    UICtrl.clearFields()
     // calc budget
 
     // display
