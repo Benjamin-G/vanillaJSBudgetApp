@@ -89,7 +89,8 @@ const UIController = ( _ => {
     budgetLabel: '.budget__value',
     incomeLabel: '.budget__income--value',
     expenseLabel: '.budget__expenses--value',
-    percentageLabel: '.budget__expenses--percentage'
+    percentageLabel: '.budget__expenses--percentage',
+    container: '.container'
   }
 
   return {
@@ -105,7 +106,7 @@ const UIController = ( _ => {
       const isIncome = type === 'inc'
 
       //set HTML depending on income or expense
-      const idHTML = isIncome ? `income-${obj.id}` : `expense-${obj.id}`
+      const idHTML = isIncome ? `inc-${obj.id}` : `exp-${obj.id}`
       const valueHTML = isIncome ? `+ ${obj.value}` : `- ${obj.value}`
       const descHTML = obj.description
 
@@ -157,6 +158,9 @@ const controller = ((budgetCtrl, UICtrl) => {
     document.addEventListener('keypress', e => {
       if(e.keyCode === 13 || e.which === 13) { ctrlAddItem() }
     })
+
+    //Event delegation, this is the container all delete buttons have in common
+    document.querySelector(DOMstrings.container).addEventListener('click', ctrlDeleteItem)
   }
 
   const updateBudget = _ => {
@@ -186,6 +190,18 @@ const controller = ((budgetCtrl, UICtrl) => {
       updateBudget()
     }
   }
+
+  const ctrlDeleteItem = e => {
+    const itemID = e.target.parentNode.parentNode.parentNode.parentNode.id
+    if(itemID) {
+      const splitID = itemID.split('-')
+      const isIncome = splitID[0] === 'inc'
+      console.log(splitID)
+      console.log(isIncome)
+      console.log(splitID[1])
+    }
+  }
+
   return {
     init: _ => {
       console.log('Application has started')
