@@ -130,15 +130,22 @@ const UIController = ( _ => {
     },
 
     deleteListItem: id => {
-
+      const el = document.getElementById(id)
+      //Delete child from parent
+      el.parentNode.removeChild(el)
     },
 
     clearFields: _ => {
+      // Select the fields
       const fields = document.querySelectorAll(`${DOMstrings.inputDescription}, ${DOMstrings.inputValue}`)
+
+      //Convert list to array
       const fieldsArr = Array.prototype.slice.call(fields)
 
+      // Set all fields to empty strings
       fieldsArr.forEach(element => element.value = '' )
 
+      // Reset focus
       fieldsArr[0].focus()
     },
     displayBudget: ({budget, totalInc, totalExp, percentage}) => {
@@ -208,7 +215,10 @@ const controller = ((budgetCtrl, UICtrl) => {
       //Delete from data structure
       budgetCtrl.deleteItem(type, id)
 
+      //Remove item of UI
+      UICtrl.deleteListItem(itemID)
 
+      //Update Budget
       updateBudget()
     }
   }
