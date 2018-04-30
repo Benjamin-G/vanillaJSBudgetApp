@@ -1,13 +1,7 @@
 // BUDGET CONTROLLER
 const budgetController = ( _ => {
 
-  const createExpense = (id, description, value) => ({
-    id,
-    description,
-    value
-  })
-
-  const createIncome = (id, description, value) => ({
+  const createBudgetItem = (id, description, value) => ({
     id,
     description,
     value
@@ -37,7 +31,7 @@ const budgetController = ( _ => {
       const id = notFirst ? data.allItems[type].slice(-1)[0].id + 1 : 0
 
       //Create new Item
-      const newItem = type === 'exp' ? createExpense(id, desc, value) : createIncome(id, desc, value)
+      const newItem = createBudgetItem(id,desc,value)
 
       //Store previous state
       const prevState = data.allItems[type]
@@ -46,6 +40,14 @@ const budgetController = ( _ => {
       data.allItems[type] = [...prevState, newItem ]
     
       return newItem
+    },
+
+    deleteItem: (type, id) => {
+      console.log('deleted!')
+      //store previous state
+      const prevState = data.allItems[type]
+      //update data structure 
+      data.allItems[type] = prevState.filter(x => x.id !== parseInt(id))
     },
 
     calcBudget: _ => {
@@ -127,6 +129,10 @@ const UIController = ( _ => {
       document.querySelector(element).insertAdjacentHTML('beforeend', html)
     },
 
+    deleteListItem: id => {
+
+    },
+
     clearFields: _ => {
       const fields = document.querySelectorAll(`${DOMstrings.inputDescription}, ${DOMstrings.inputValue}`)
       const fieldsArr = Array.prototype.slice.call(fields)
@@ -194,11 +200,16 @@ const controller = ((budgetCtrl, UICtrl) => {
   const ctrlDeleteItem = e => {
     const itemID = e.target.parentNode.parentNode.parentNode.parentNode.id
     if(itemID) {
+      //Store fields
       const splitID = itemID.split('-')
-      const isIncome = splitID[0] === 'inc'
-      console.log(splitID)
-      console.log(isIncome)
-      console.log(splitID[1])
+      const type = splitID[0]
+      const id = splitID[1]
+
+      //Delete from data structure
+      budgetCtrl.deleteItem(type, id)
+
+
+      updateBudget()
     }
   }
 
